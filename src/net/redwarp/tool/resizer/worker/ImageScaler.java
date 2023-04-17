@@ -87,6 +87,9 @@ public class ImageScaler extends SwingWorker<Void, Operation> {
       List<ScreenDensity> densityList = Configuration.getSettings()
           .getSupportedScreenDensity();
 
+      String locale = Configuration.getSettings().getLocale();
+      String folder = Configuration.getSettings().getFolder();
+
       File parent = this.inputFile.getParentFile();
       for (ScreenDensity density : densityList) {
         if (!density.isActive()) {
@@ -95,8 +98,7 @@ public class ImageScaler extends SwingWorker<Void, Operation> {
         File outputFolder;
 
         synchronized (folderLock) {
-          outputFolder = new File(parent, "mipmap-"
-                                          + density.getName());
+          outputFolder = new File(parent, folder+"-" + locale + density.getName());
           if (!outputFolder.exists()) {
             outputFolder.mkdir();
           }

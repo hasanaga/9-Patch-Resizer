@@ -45,11 +45,15 @@ public class Settings {
   private static final String KEY_SOURCE = "source";
   private static final String KEY_KEEP_SAME_DENSITY_FILE = "keep_same_density_file";
   private static final String KEY_VERSION_CODE = "version_code";
+  private static final String KEY_LOCALE = "locale";
+  private static final String KEY_FOLDER = "folder";
   public static final String DENSITIES_PATHNAME = "./densities.json";
 
   private List<ScreenDensity> list = null;
   private ScreenDensity defaultInputDensity = null;
   private boolean keepSameDensityFile = false;
+  private String locale = "";
+  private String folder = "";
   private int versionCode;
 
   public void load(String path) {
@@ -89,6 +93,24 @@ public class Settings {
       } else {
         keepSameDensityFile = false;
       }
+
+
+      JsonElement localeElement = densitiesObject.get(
+              KEY_LOCALE);
+      if (localeElement != null) {
+        locale = localeElement.getAsString();
+      } else {
+        locale = "";
+      }
+
+      JsonElement folderElement = densitiesObject.get(
+              KEY_FOLDER);
+      if (folderElement != null) {
+        folder = folderElement.getAsString();
+      } else {
+        folder = "";
+      }
+
     } catch (Exception e) {
       list = new ArrayList<ScreenDensity>();
       list.add(new ScreenDensity("xhdpi", 2.0f, true));
@@ -113,6 +135,8 @@ public class Settings {
     rootObject.add(KEY_DENSITIES, densities);
     rootObject.addProperty(KEY_KEEP_SAME_DENSITY_FILE, keepSameDensityFile);
     rootObject.addProperty(KEY_VERSION_CODE, Configuration.getVersionCode());
+    rootObject.addProperty(KEY_LOCALE, locale);
+    rootObject.addProperty(KEY_FOLDER, folder);
 
     SaveWorker worker = new SaveWorker(postAction, gson.toJson(rootObject));
     worker.execute();
@@ -136,6 +160,23 @@ public class Settings {
 
   public void setShouldKeepSameDensityFile(boolean shouldKeepSameDensityFile) {
     this.keepSameDensityFile = shouldKeepSameDensityFile;
+  }
+
+  public void setLocale(String locale){
+    this.locale = locale;
+  }
+
+  public String getLocale(){
+    return locale == null || locale.isEmpty() ? "" : locale + "-";
+  }
+
+
+  public void setFolder(String folder){
+    this.folder = folder;
+  }
+
+  public String getFolder(){
+    return folder == null || folder.isEmpty() ? "" : folder;
   }
 
   public static class SaveWorker extends SwingWorker<Void, Void> {

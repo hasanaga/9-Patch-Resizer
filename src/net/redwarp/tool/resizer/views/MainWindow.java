@@ -39,6 +39,8 @@ import java.util.Vector;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
 
 @SuppressWarnings("serial")
@@ -51,7 +53,8 @@ public class MainWindow extends JFrame {
   private JLabel instructionLabel;
   private JMenuItem mntmClear;
   private final Action action = new SwingAction();
-  private JComboBox<ScreenDensity> inputDensityChoice;
+  private JComboBox inputDensityChoice;
+  private JComboBox<Integer> sdsd;
   //  private JFileChooser fileChooser;
   private FileDialog fileDialog;
 
@@ -204,7 +207,7 @@ public class MainWindow extends JFrame {
     JLabel inputLabel = new JLabel(Localization.get("input_density"));
     inputLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
     optionPanel.add(inputLabel);
-    inputDensityChoice = new JComboBox<ScreenDensity>(
+    inputDensityChoice = new JComboBox(
         new Vector<ScreenDensity>(Configuration.getSettings().getSupportedScreenDensity()));
     inputDensityChoice.setSelectedItem(Configuration.getSettings().getDefaultInputDensity());
     inputDensityChoice.addActionListener(new ActionListener() {
@@ -224,6 +227,9 @@ public class MainWindow extends JFrame {
     optionPanel.add(inputDensityChoice);
     optionPanel.add(Box.createVerticalGlue());
 
+
+
+
     JLabel outputLabel = new JLabel(Localization.get("output_density"));
     optionPanel.add(outputLabel);
     for (final ScreenDensity density : Configuration.getSettings().getSupportedScreenDensity()) {
@@ -239,6 +245,67 @@ public class MainWindow extends JFrame {
       optionPanel.add(box);
     }
     optionPanel.add(Box.createVerticalGlue());
+
+    //Added by hsn
+
+    optionPanel.add(Box.createVerticalGlue());
+
+    JLabel localeLabel = new JLabel(Localization.get("output_locale"));
+    optionPanel.add(localeLabel);
+
+    final JTextField localeField = new JTextField();
+
+
+    localeField.getDocument().addDocumentListener(new DocumentListener() {
+      @Override
+      public void insertUpdate(DocumentEvent e) {
+        changedUpdate(e);
+      }
+
+      @Override
+      public void removeUpdate(DocumentEvent e) {
+        changedUpdate(e);
+      }
+
+      @Override
+      public void changedUpdate(DocumentEvent e) {
+        Configuration.getSettings().setLocale(localeField.getText());
+      }
+    });
+    localeField.setToolTipText("exp: ru_RU");
+    optionPanel.add(localeField);
+
+
+    //
+
+    optionPanel.add(Box.createVerticalGlue());
+
+    JLabel folderLabel = new JLabel("Output folder");
+    optionPanel.add(folderLabel);
+
+    final JTextField folderField = new JTextField();
+
+    folderField.getDocument().addDocumentListener(new DocumentListener() {
+      @Override
+      public void insertUpdate(DocumentEvent e) {
+        changedUpdate(e);
+      }
+
+      @Override
+      public void removeUpdate(DocumentEvent e) {
+        changedUpdate(e);
+      }
+
+      @Override
+      public void changedUpdate(DocumentEvent e) {
+        Configuration.getSettings().setFolder(folderField.getText());
+      }
+    });
+    folderField.setText("mipmap");
+    optionPanel.add(folderField);
+
+
+    //End
 
     final JCheckBox keepDensity = new JCheckBox(Localization.get("keep_same_density_file"));
     keepDensity.setToolTipText(Localization.get("keep_same_density_file_tooltip"));
